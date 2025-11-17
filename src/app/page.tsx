@@ -1,65 +1,174 @@
-import Image from "next/image";
+'use client';
+
+import { useEffect, useState, useCallback, useMemo } from 'react';
+import { GameProvider, useGame } from '@/app/context/GameContext';
+import { ChessBoard } from '@/app/components/chess/ChessBoard';
+import { PlayerPanel } from '@/app/components/ui/PlayerPanel';
+import { MoveHistory } from '@/app/components/chess/MoveHistory';
+import { GameControls } from '@/app/components/ui/GameControls';
+import { GameOverModal } from '@/app/components/ui/GameOverModal';
+import { PromotionDialog } from '@/app/components/ui/PromotionDialog';
+import { TurnNotification } from '@/app/components/ui/TurnNotification';
+import { PieceType } from '@/domain/value-objects/PieceType';
+import { PieceColor } from '@/domain/value-objects/PieceColor';
+
+function GamePage() {
+  const { 
+    startNewGame, 
+    gameState,
+    pendingPromotion,
+    makeMove,
+    cancelPromotion,
+    showInvalidTurnNotification,
+    hideInvalidTurnNotification
+  } = useGame();
+  const [showGameOverModal, setShowGameOverModal] = useState(false);
+
+  useEffect(() => {
+    startNewGame();
+  }, [startNewGame]);
+
+  const gameStatus = gameState?.status ?? null;
+  const isGameOver = useMemo(() => {
+    if (!gameStatus) return false;
+    
+    return (
+      gameStatus.includes('checkmate') ||
+      gameStatus.includes('stalemate') ||
+      gameStatus.includes('draw') ||
+      gameStatus.includes('resigned')
+    );
+  }, [gameStatus]);
+
+  useEffect(() => {
+    setShowGameOverModal(isGameOver);
+  }, [isGameOver]);
+
+  const handleNewGame = useCallback(() => {
+    setShowGameOverModal(false);
+    startNewGame();
+  }, [startNewGame]);
+
+  const getWinner = useCallback((): 'white' | 'black' | 'draw' => {
+    if (!gameState) return 'draw';
+    
+    if (gameState.status.includes('draw') || gameState.status.includes('stalemate')) {
+      return 'draw';
+    }
+    
+    if (gameState.status === 'checkmate') {
+      return gameState.currentTurn === 'white' ? 'black' : 'white';
+    }
+    
+    if (gameState.status === 'resigned') {
+      return gameState.currentTurn === 'white' ? 'black' : 'white';
+    }
+    
+    return 'draw';
+  }, [gameState]);
+
+  const handlePromotionSelect = useCallback(async (pieceType: PieceType) => {
+    if (pendingPromotion) {
+      await makeMove(pendingPromotion.from, pendingPromotion.to, pieceType);
+    }
+  }, [pendingPromotion, makeMove]);
+
+  const getCurrentPlayerName = useCallback(() => {
+    if (!gameState) return 'Player';
+    return gameState.currentTurn === 'white' ? 'Player 1' : 'Player 2';
+  }, [gameState]);
+
+  if (!gameState) {
+    return (
+      <div className="loading-container">
+        <div className="loading-content">
+          <div style={{ fontSize: '80px', marginBottom: '20px' }}>♟️</div>
+          <div style={{ color: 'white', fontSize: '20px' }}>Loading...</div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="game-container">
+      {/* Header */}
+      <header className="game-header">
+        <h1 className="game-title">Chess App</h1>
+      </header>
+
+      {/* Show only on invalid turn attempt */}
+      <TurnNotification
+        currentTurn={gameState.currentTurn}
+        playerName={getCurrentPlayerName()}
+        show={showInvalidTurnNotification}
+        onClose={hideInvalidTurnNotification}
+      />
+
+      {/* Main Content */}
+      <div className="main-content">
+        
+        {/* Left Side - Board Area */}
+        <div className="board-area">
+          {/* Chess Board */}
+          <div className="board-wrapper">
+            <ChessBoard />
+          </div>
+
+          {/* Player Panels */}
+          <div className="player-panels">
+            <div className="player-panel-top">
+              <PlayerPanel
+                color="black"
+                playerName="Player 2"
+                isActive={gameState.currentTurn === 'black'}
+                capturedPieces={gameState.capturedPieces.white}
+              />
+            </div>
+
+            <div className="player-panel-bottom">
+              <PlayerPanel
+                color="white"
+                playerName="Player 1"
+                isActive={gameState.currentTurn === 'white'}
+                capturedPieces={gameState.capturedPieces.black}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Right Sidebar */}
+        <div className="sidebar">
+          <MoveHistory />
+          <GameControls />
+        </div>
+      </div>
+
+      {/* Promotion Dialog */}
+      {pendingPromotion && (
+        <PromotionDialog
+          isOpen={true}
+          color={gameState.currentTurn === 'white' ? PieceColor.White : PieceColor.Black}
+          onSelect={handlePromotionSelect}
+          onCancel={cancelPromotion}
+        />
+      )}
+
+      {/* Game Over Modal */}
+      <GameOverModal
+        isOpen={showGameOverModal}
+        onClose={() => setShowGameOverModal(false)}
+        onNewGame={handleNewGame}
+        winner={getWinner()}
+        reason={gameState.status}
+      />
+    </div>
+  );
+}
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <GameProvider>
+      <GamePage />
+    </GameProvider>
   );
 }
