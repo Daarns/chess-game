@@ -1,142 +1,83 @@
 # ♟️ Chess Game
 
-A full-featured chess game built with **Next.js 15**, **TypeScript**, and **Tailwind CSS**. This project implements **SOLID principles**, **design patterns** (Repository, Adapter, Dependency Injection), and **Clean Architecture** for learning advanced software engineering concepts.
+A feature-rich chess application built with **Next.js 16**, **TypeScript**, and **Clean Architecture** principles. Play local multiplayer with full chess rules implementation, responsive design, and modern UI.
 
-## 🎯 Project Goals
+![Version](https://img.shields.io/badge/version-1.0.0-blue)
+![Next.js](https://img.shields.io/badge/Next.js-16-black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)
+![Tailwind](https://img.shields.io/badge/Tailwind-v4-38bdf8)
 
-This project is designed as a learning platform to master:
+## 🎮 Current Build: Local Multiplayer
 
-- **SOLID Principles** - Writing maintainable and scalable code
-- **Design Patterns** - Repository, Adapter, Strategy patterns
-- **Clean Architecture** - Separation of concerns and dependency management
-- **TypeScript** - Type-safe development
-- **Modern React/Next.js** - Component architecture and state management
+**Play chess locally with two players on the same device:**
+- ✅ Complete chess rules (all pieces, special moves)
+- ✅ Turn-based gameplay with visual feedback
+- ✅ Move history with undo/redo functionality
+- ✅ Fully responsive (desktop to mobile)
+- ✅ Game state persistence (auto-save)
+
+## ✨ Key Features
+
+### Chess Rules ✅
+- All piece movements (Pawn, Knight, Bishop, Rook, Queen, King)
+- Special moves: **Castling**, **En Passant**, **Pawn Promotion**
+- Check, checkmate, and stalemate detection
+- Legal move validation and indicators
+
+### Interactive UI ✅
+- Click-to-move interface
+- Visual legal move indicators
+- Last move highlighting
+- Selected piece feedback
+- Turn-based move validation
+- Invalid move notifications
+
+### Game Controls ✅
+- **Undo/Redo** - Navigate through move history
+- **New Game** - Start fresh match
+- **Resign** - Forfeit current game
+- **Move History** - View all moves with notation
+- **Auto-save** - Game state persists in browser
+
+### Responsive Design ✅
+- Desktop (1920px - 1024px)
+- Tablet (1024px - 768px)
+- Mobile (< 768px) with optimized layout
+- Dynamic board and piece sizing
+- Touch-friendly controls
 
 ## 🚀 Tech Stack
 
-### Current (Phase 1)
-- **Framework**: Next.js 16 (App Router)
-- **Language**: TypeScript 5
-- **Styling**: Tailwind CSS v4
-- **State Management**: React Context API
-- **Storage**: Local Storage (Repository Pattern)
+| Category | Technology |
+|----------|-----------|
+| **Framework** | Next.js 16 (App Router) |
+| **Language** | TypeScript 5 |
+| **Styling** | Tailwind CSS v4 |
+| **State Management** | React Context API |
+| **Storage** | LocalStorage (Repository Pattern) |
+| **Architecture** | Clean Architecture + SOLID Principles |
+| **Design Patterns** | Repository, Adapter, Dependency Injection |
 
-### Future (Phase 2 - Planned)
-- **Backend**: Python FastAPI
-- **Database**: PostgreSQL
-- **Real-time**: WebSockets
-- **Containerization**: Docker & Docker Compose
-- **AI Engine**: Minimax algorithm with alpha-beta pruning
+## 🎯 Project Goals
 
-## 📁 Project Structure
-
-```
-src/
-├── app/                      # Next.js App Router (Presentation Layer)
-│   ├── components/
-│   │   ├── chess/           # Chess-specific components
-│   │   └── ui/              # Reusable UI components
-│   ├── hooks/               # Custom React hooks
-│   └── context/             # React Context for state management
-│
-├── core/                     # Application/Business Logic Layer
-│   ├── usecases/            # Use cases (MakeMove, StartGame, etc)
-│   └── dtos/                # Data Transfer Objects
-│
-├── domain/                   # Domain Layer (Business Rules)
-│   ├── entities/            # Domain entities (Piece, Board, Game)
-│   ├── value-objects/       # Immutable objects (Position, Move)
-│   ├── services/            # Domain services (MoveValidator)
-│   └── interfaces/          # Contracts for Dependency Inversion
-│
-├── infrastructure/           # Infrastructure Layer
-│   ├── repositories/        # Data persistence implementations
-│   ├── adapters/            # External format adapters (FEN, PGN)
-│   └── storage/             # Storage utilities
-│
-└── shared/                   # Shared utilities
-    ├── types/               # Common TypeScript types
-    ├── constants/           # Game constants
-    └── utils/               # Helper functions
-
-
-## 🎨 SOLID Principles Implementation
-
-### 1. Single Responsibility Principle (SRP)
-Each class has one reason to change:
-- `MoveValidator` - Only validates chess moves
-- `GameEngine` - Only manages game state
-- `ChessBoard` component - Only renders the board
-
-### 2. Open/Closed Principle (OCP)
-Open for extension, closed for modification:
-- Abstract `Piece` class can be extended with new piece types
-- New game modes can be added without modifying existing code
-
-### 3. Liskov Substitution Principle (LSP)
-Derived classes are substitutable for base classes:
-- All piece classes (`King`, `Queen`, `Rook`, etc.) can substitute `Piece`
-- All implementations work with `IPiece` interface
-
-### 4. Interface Segregation Principle (ISP)
-Clients shouldn't depend on interfaces they don't use:
-- `IGameRepository` - Only game persistence methods
-- `IMoveValidator` - Only move validation methods
-- `INotationAdapter` - Only notation conversion methods
-
-### 5. Dependency Inversion Principle (DIP)
-Depend on abstractions, not concretions:
-- Use cases depend on `IGameRepository` interface
-- Easy to swap `LocalStorageRepository` with `ApiRepository` later
-
-## 🎯 Design Patterns
-
-### Repository Pattern
-Abstracts data persistence logic:
-```typescript
-interface IGameRepository {
-  save(game: Game): Promise<void>;
-  load(gameId: string): Promise<Game | null>;
-}
-
-// Implementation can be swapped easily
-class LocalStorageGameRepository implements IGameRepository { }
-class ApiGameRepository implements IGameRepository { } // Future
-```
-
-### Adapter Pattern
-Converts data between different formats:
-```typescript
-class FenAdapter {
-  toBoardState(fen: string): Board;
-  fromBoardState(board: Board): string;
-}
-```
-
-### Dependency Injection
-Dependencies are injected via constructors:
-```typescript
-class MakeMove {
-  constructor(
-    private gameRepository: IGameRepository,
-    private moveValidator: IMoveValidator
-  ) {}
-}
-```
+Built as a learning project to master:
+1. **Clean Architecture** - Separation of concerns (Domain, Application, Infrastructure)
+2. **SOLID Principles** - Maintainable and scalable code
+3. **Design Patterns** - Repository pattern, Dependency Injection
+4. **TypeScript** - Type-safe development
+5. **Modern React** - Context API, custom hooks, component composition
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js 18+ 
-- npm or yarn or pnpm
+- Node.js 18 or higher
+- npm, yarn, or pnpm
 
 ### Installation
 
 ```bash
-# Clone the repository
-git clone https://github.com/YOUR_USERNAME/chess-game.git
-
-# Navigate to project directory
+# Clone repository
+git clone https://github.com/Daarns/chess-game.git
 cd chess-game
 
 # Install dependencies
@@ -146,66 +87,108 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to see the chess game.
+Open [http://localhost:3000](http://localhost:3000) to play!
 
-## 📚 Learning Resources
+### Build for Production
 
-This project implements concepts from:
-- **Clean Architecture** by Robert C. Martin
-- **Design Patterns** by Gang of Four
-- **Domain-Driven Design** by Eric Evans
+```bash
+npm run build
+npm start
+```
 
-## 🗺️ Roadmap
+## 🎮 How to Play
 
-### Phase 1: Foundation (Current)
-- [x] Project structure with Clean Architecture
-- [ ] Chess board UI with drag & drop
-- [ ] All chess pieces implementation
-- [ ] Move validation (legal moves)
-- [ ] Check and checkmate detection
-- [ ] Move history and undo functionality
-- [ ] Game state persistence (localStorage)
+1. **Start Game** - Click "New Game" button
+2. **Make Move** - Click piece → Click destination square
+3. **Special Moves**:
+   - **Castling**: Click King → Click 2 squares left/right
+   - **En Passant**: Automatically available when valid
+   - **Promotion**: Choose piece when pawn reaches end rank
+4. **Undo/Redo** - Navigate move history with arrow buttons
+5. **View History** - See all moves with standard chess notation
 
-### Phase 2: AI & Advanced Features
-- [ ] Minimax algorithm for AI opponent
-- [ ] Difficulty levels
+## 🗺️ Development Roadmap
+
+### ✅ Phase 1: Local Multiplayer (COMPLETED)
+- [x] Full chess rules implementation
+- [x] Interactive board with legal moves
+- [x] Undo/redo functionality
+- [x] Move history viewer
+- [x] Responsive design
+- [x] Game state persistence
+
+### 🔄 Phase 2: Enhancements (PLANNED)
+- [ ] Sound effects (move, capture, check)
+- [ ] Drag & drop movement
+- [ ] Move timer/clock
+- [ ] FEN/PGN import/export
+
+### 🔮 Phase 3: AI Opponent (PLANNED)
+- [ ] Minimax algorithm with alpha-beta pruning
+- [ ] Difficulty levels (Easy, Medium, Hard)
 - [ ] Move suggestions
-- [ ] FEN notation import/export
-- [ ] PGN notation support
-- [ ] Game analysis
+- [ ] Position evaluation
 
-### Phase 3: Multiplayer (Future)
+### 🚀 Phase 4: Online Multiplayer (FUTURE)
 - [ ] Python FastAPI backend
-- [ ] WebSocket for real-time games
+- [ ] WebSocket real-time games
 - [ ] User authentication
-- [ ] Matchmaking system
-- [ ] Leaderboard
-- [ ] Game history
 - [ ] PostgreSQL database
-- [ ] Docker containerization
+- [ ] Docker deployment
 
-## 🤝 Contributing
+## 📱 Responsive Breakpoints
 
-This is a personal learning project, but suggestions and feedback are welcome! Feel free to:
-- Open issues for bugs or suggestions
-- Submit pull requests for improvements
-- Share your learning insights
+| Device | Screen Size | Status |
+|--------|-------------|--------|
+| Desktop 4K | 1920px+ | ✅ |
+| Desktop FHD | 1440px - 1919px | ✅ |
+| Laptop | 1024px - 1439px | ✅ |
+| Tablet | 768px - 1023px | ✅ |
+| Mobile | < 768px | ✅ |
 
-## 📝 License
+## 🏗️ Architecture Highlights
 
-This project is open source and available under the [MIT License](LICENSE).
+### Clean Architecture Layers
+```
+Presentation → Application → Domain → Infrastructure
+    (UI)         (Use Cases)   (Rules)   (Data/External)
+```
+
+### Key Design Patterns
+- **Repository Pattern** - Abstract data persistence
+- **Dependency Injection** - Loose coupling
+- **Use Case Pattern** - Encapsulated business logic
+- **Adapter Pattern** - External format conversion (FEN, PGN)
+
+### SOLID Principles Applied
+- **SRP**: Each class has single responsibility
+- **OCP**: Open for extension, closed for modification
+- **LSP**: Piece inheritance hierarchy
+- **ISP**: Focused interfaces (IGameRepository, IMoveValidator)
+- **DIP**: Depend on abstractions, not implementations
+
+## 🐛 Known Issues
+
+None currently! 🎉
+
+## 📊 Project Stats
+
+- **Lines of Code**: ~5,000+
+- **Components**: 15+
+- **Use Cases**: 6
+- **Supported Devices**: All screen sizes
 
 ## 👨‍💻 Author
 
-Built with ❤️ as a learning project to master software architecture principles and TypeScript development.
+**Daarn**
+- GitHub: [@Daarns](https://github.com/Daarns)
+
+Built with ❤️ for learning software architecture and TypeScript.
 
 ---
 
-⭐ **Star this repo** if you find it helpful for learning!
+⭐ **Star this repo** if you find it useful!
 
-## 📖 Documentation
+## 📞 Questions or Feedback?
 
-- [Architecture Overview](docs/ARCHITECTURE.md) _(coming soon)_
-- [SOLID Principles Guide](docs/SOLID.md) _(coming soon)_
-- [Design Patterns Explained](docs/PATTERNS.md) _(coming soon)_
-- [Chess Rules Implementation](docs/CHESS_RULES.md) _(coming soon)_
+Open an issue on [GitHub](https://github.com/Daarns/chess-game/issues)
